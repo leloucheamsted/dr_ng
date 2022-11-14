@@ -1,6 +1,6 @@
-function Details(){
+function Registration(){
     return(
         <div></div>
     )
 }
-export  default Details;
+export  default Registration;
