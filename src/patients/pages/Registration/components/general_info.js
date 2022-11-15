@@ -1,5 +1,5 @@
 import React from "react";
-import {Input} from "antd/es";
+import {Input, Select} from "antd/es";
 
 class GeneralInformation extends  React.Component{
     render() {
@@ -20,13 +20,28 @@ class GeneralInformation extends  React.Component{
                 {/*    Name*/}
                     <div className=" font-medium flex flex-col h-auto">
                         <h2>Name</h2>
-                        <Input  className="" style={{border:2,borderColor:'#cdc9c6'}}></Input>
+                        <Input   className="" style={{border:2,borderColor:'#cdc9c6'}}></Input>
                     </div>
 
                     {/*    Gender*/}
                     <div className=" font-medium flex flex-col h-auto">
                         <h2>Sex</h2>
-                        <Input  className=""></Input>
+                        <Select
+                            defaultValue="Male"
+                            style={{ width: 120 }}
+                            // onChange={handleChange}
+                            options={[
+                                {
+                                    value: 'male',
+                                    label: 'Male',
+                                },
+                                {
+                                    value: 'female',
+                                    label: 'Female',
+                                },
+
+                            ]}
+                        />
                     </div>
                     {/*    Age*/}
                     <div className=" font-medium flex flex-col h-auto">

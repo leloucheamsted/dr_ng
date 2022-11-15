@@ -1,145 +1,150 @@
 import {Button, Col, Input, InputNumber, Pagination, Row, Slider, Space, Table, Tag} from "antd";
 import "antd/dist/antd.css";
 import React, {useState,Component} from 'react';
+import { useSelector, useDispatch,connect } from "react-redux";
 import {IonIcon} from "@ionic/react";
 import {filter,trash,search,createOutline,chevronUp,chevronDown} from "ionicons/icons";
 import Icon from "antd/es/icon";
 import Highlighter from "react-highlight-words";
-const data = [
-    {
-        key: '1',
-        name: 'John Brown',
-        code:'A123IFNFV',
-        age: 32,
-        gender:'male',
-        phone:'695451282',
-        address: 'New York No. 1 Lake Park',
-        appointmentDate:'',
-        dateOfRecordEntry:'',
-        status: ['passed']
-    },
-    {
-        key: '2',
-        name: 'Jim Green',
-        code:'A123IVFFV',
-        age: 42,
-        gender:'female',
-        address: 'London No. 1 Lake Park',
-        phone:'695451285',
-        appointmentDate:'',
-        dateOfRecordEntry:'',
-        status: ['missed'],
-    },
-    {
-        key: '3',
-        name: 'Joe Black',
-        code:'A123IFNCT',
-        age: 32,
-        gender:'male',
-        phone:'695451284',
-        address: 'Sidney No. 1 Lake Park',
-        appointmentDate:'',
-        dateOfRecordEntry:'',
-        status: ['rescheduled'],
-    },
-    {
-        key: '4',
-        name: 'John Brown',
-        code:'A123IFNFV',
-        age: 32,
-        gender:'male',
-        phone:'695451282',
-        address: 'New York No. 1 Lake Park',
-        appointmentDate:'',
-        dateOfRecordEntry:'',
-        status: ['passed']
-    },
-    {
-        key: '5',
-        name: 'Jim Green',
-        code:'A123IVFFV',
-        age: 42,
-        gender:'female',
-        address: 'London No. 1 Lake Park',
-        phone:'695451285',
-        appointmentDate:'',
-        dateOfRecordEntry:'',
-        status: ['missed'],
-    },
-    {
-        key: '6',
-        name: 'Joe Black',
-        code:'A123IFNCT',
-        age: 32,
-        gender:'male',
-        phone:'695451284',
-        address: 'Sidney No. 1 Lake Park',
-        appointmentDate:'',
-        dateOfRecordEntry:'',
-        status: ['rescheduled'],
-    },
-    {
-        key: '7',
-        name: 'John Brown',
-        code:'A123IFNFV',
-        age: 32,
-        gender:'male',
-        phone:'695451282',
-        address: 'New York No. 1 Lake Park',
-        appointmentDate:'',
-        dateOfRecordEntry:'',
-        status: ['passed']
-    },
-    {
-        key: '8',
-        name: 'Jim Green',
-        code:'A123IVFFV',
-        age: 42,
-        gender:'female',
-        address: 'London No. 1 Lake Park',
-        phone:'695451285',
-        appointmentDate:'',
-        dateOfRecordEntry:'',
-        status: ['missed'],
-    },
-    {
-        key: '9',
-        name: 'Joe Black',
-        code:'A123IFNCT',
-        age: 32,
-        gender:'male',
-        phone:'695451284',
-        address: 'Sidney No. 1 Lake Park',
-        appointmentDate:'',
-        dateOfRecordEntry:'',
-        status: ['rescheduled'],
-    },
-];
+import store from "../../../../store";
+import {getPatients} from "../../../../slice/patientSlicer";
+// const data = [
+//     {
+//         key: '1',
+//         name: 'John Brown',
+//         code:'A123IFNFV',
+//         age: 32,
+//         gender:'male',
+//         phone:'695451282',
+//         address: 'New York No. 1 Lake Park',
+//         appointmentDate:'',
+//         dateOfRecordEntry:'',
+//         status: ['passed']
+//     },
+//     {
+//         key: '2',
+//         name: 'Jim Green',
+//         code:'A123IVFFV',
+//         age: 42,
+//         gender:'female',
+//         address: 'London No. 1 Lake Park',
+//         phone:'695451285',
+//         appointmentDate:'',
+//         dateOfRecordEntry:'',
+//         status: ['missed'],
+//     },
+//     {
+//         key: '3',
+//         name: 'Joe Black',
+//         code:'A123IFNCT',
+//         age: 32,
+//         gender:'male',
+//         phone:'695451284',
+//         address: 'Sidney No. 1 Lake Park',
+//         appointmentDate:'',
+//         dateOfRecordEntry:'',
+//         status: ['rescheduled'],
+//     },
+//     {
+//         key: '4',
+//         name: 'John Brown',
+//         code:'A123IFNFV',
+//         age: 32,
+//         gender:'male',
+//         phone:'695451282',
+//         address: 'New York No. 1 Lake Park',
+//         appointmentDate:'',
+//         dateOfRecordEntry:'',
+//         status: ['passed']
+//     },
+//     {
+//         key: '5',
+//         name: 'Jim Green',
+//         code:'A123IVFFV',
+//         age: 42,
+//         gender:'female',
+//         address: 'London No. 1 Lake Park',
+//         phone:'695451285',
+//         appointmentDate:'',
+//         dateOfRecordEntry:'',
+//         status: ['missed'],
+//     },
+//     {
+//         key: '6',
+//         name: 'Joe Black',
+//         code:'A123IFNCT',
+//         age: 32,
+//         gender:'male',
+//         phone:'695451284',
+//         address: 'Sidney No. 1 Lake Park',
+//         appointmentDate:'',
+//         dateOfRecordEntry:'',
+//         status: ['rescheduled'],
+//     },
+//     {
+//         key: '7',
+//         name: 'John Brown',
+//         code:'A123IFNFV',
+//         age: 32,
+//         gender:'male',
+//         phone:'695451282',
+//         address: 'New York No. 1 Lake Park',
+//         appointmentDate:'',
+//         dateOfRecordEntry:'',
+//         status: ['passed']
+//     },
+//     {
+//         key: '8',
+//         name: 'Jim Green',
+//         code:'A123IVFFV',
+//         age: 42,
+//         gender:'female',
+//         address: 'London No. 1 Lake Park',
+//         phone:'695451285',
+//         appointmentDate:'',
+//         dateOfRecordEntry:'',
+//         status: ['missed'],
+//     },
+//     {
+//         key: '9',
+//         name: 'Joe Black',
+//         code:'A123IFNCT',
+//         age: 32,
+//         gender:'male',
+//         phone:'695451284',
+//         address: 'Sidney No. 1 Lake Park',
+//         appointmentDate:'',
+//         dateOfRecordEntry:'',
+//         status: ['rescheduled'],
+//     },
+// ];
 
 const pageSize = 4;
-  class  PatientsList extends React.Component {
+  class     PatientsList extends React.Component {
+      constructor(props) {
+          super(props)
+          this.state = {
+              data: [],
+              orderDirection:"",
+              searchText: "",
+              left: 33,
+              right: 50,
+              totalPage: 0,
+              current: 1,
+              minIndex: 0,
+              maxIndex: 0,
+          }
+      }
 
-    state = {
-        orderDirection:"",
-        searchText: "",
-        left: 33,
-        right: 50,
-        totalPage: 0,
-        current: 1,
-        minIndex: 0,
-        maxIndex: 0,
-    };
       componentDidMount() {
           this.setState({
-              data,
-              totalPage: data.length / pageSize,
-              minIndex: 0,
-              maxIndex: pageSize
+
           })
       }
       getData = (current, pageSize) => {
+          console.log(this.props.data);
           // Normally you should get the data from the server
-          return data.slice((current - 1) * pageSize, current * pageSize);
+          return Array.from(this.props.data).slice((current - 1) * pageSize, current * pageSize);
       };
     getColumnFiltersProps=({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => (
@@ -155,7 +160,7 @@ const pageSize = 4;
                             value={this.state.left}
                             onChange={e => {
                                 this.setState({ left: e });
-                                setSelectedKeys(data.filter(d => e <= d.age).map(d => d.key));
+                                setSelectedKeys(this.data.filter(d => e <= d.age).map(d => d.key));
                             }}
                         />
                     </Col>
@@ -164,7 +169,7 @@ const pageSize = 4;
                             value={this.state.right}
                             onChange={e => {
                                 this.setState({ right: e });
-                                setSelectedKeys(data.filter(d => d.age <= e).map(d => d.key));
+                                setSelectedKeys(this.data.filter(d => d.age <= e).map(d => d.key));
                             }}
                         />
                     </Col>
@@ -184,7 +189,7 @@ const pageSize = 4;
                         onClick={() => {
                             this.handleSearchAge(selectedKeys, confirm);
                             setSelectedKeys(
-                                data
+                                this.data
                                     .filter(
                                         d => this.state.left <= d.age && d.age <= this.state.right
                                     )
@@ -285,14 +290,9 @@ const pageSize = 4;
           confirm();
           this.setState({ searchText: selectedKeys[0] });
       };
-      // handleReset = clearFilters => {
-      //     clearFilters();
-      //     this.setState({ searchText: "" });
-      // };
       changeOrder = (direction) => () => {
           console.log(direction);
           this.setState({ orderDirection: direction});
-          // setOrderDirection(direction);
       };
       handleChange = (page) => {
           this.setState({
@@ -304,10 +304,10 @@ const pageSize = 4;
 
 
     render() {
+        console.log(array)
         const { current, minIndex, maxIndex } = this.state;
-
-        //const [orderDirection, setOrderDirection] = React.useState();
-
+        const array =Array.from(this.props.data)
+        console.log(array)
         const columns = [
             {
                 title:
@@ -555,7 +555,7 @@ const pageSize = 4;
                 render: (_, record) => (
                     <Space size="middle">
                         <IonIcon className=" h-5 w-5 cursor-pointer text-[#d4383e]" icon={trash}/>
-                        <a href='./details'>
+                        <a href='./registration'>
                             <IonIcon className=" h-5 w-5 cursor-pointer text-[#708f7f]" icon={createOutline}/>
                         </a>
                     </Space>
@@ -570,7 +570,7 @@ const pageSize = 4;
                    <Pagination
                        pageSize={pageSize}
                        current={current}
-                       total={data.length}
+                       total={this.props.data.length}
                        onChange={this.handleChange}
 
                    />
@@ -581,5 +581,10 @@ const pageSize = 4;
     }
 }
 
+const mapStateToProps = (state) => {
+    return {
+        data: state.patient
+    };
+};
 // pagination={false} pagination={{defaultPageSize: 10,showSizeChanger: true,position: ["bottomCenter"]}}
-export default PatientsList;
+export default connect(mapStateToProps)(PatientsList);
