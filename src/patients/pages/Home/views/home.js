@@ -6,7 +6,7 @@ import FloatingActionButton from "../components/floating_action_button";
 
 function Home(){
     return(
-        <div className="relative  bg-[#ede9e6] ">
+        <div className="relative h-screen  bg-[#ede9e6] ">
             <AppBar></AppBar>
             <Boards></Boards>
             <PatientsList></PatientsList>

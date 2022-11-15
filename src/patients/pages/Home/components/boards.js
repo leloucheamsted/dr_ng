@@ -17,7 +17,7 @@ function Boards(){
 
                 {/* Search Bar*/}
                 <div className="bg-white flex justify-center items-center w-auto rounded-xl h-auto p-2" >
-                    <input type="text" className="border-b-2  ml-2 focus:outline-none mr-3 " placeholder="search"  />
+                    <input type="text" className="border-b-2 rounded-xl  ml-2 focus:outline-none mr-3 " placeholder="search"  />
                     <FaSearch className="text-[#bb6470] cursor-pointer h-4 w-4 mr-2"/>
                 </div>
 

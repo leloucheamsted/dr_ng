@@ -555,7 +555,9 @@ const pageSize = 4;
                 render: (_, record) => (
                     <Space size="middle">
                         <IonIcon className=" h-5 w-5 cursor-pointer text-[#d4383e]" icon={trash}/>
-                        <IonIcon className=" h-5 w-5 cursor-pointer text-[#708f7f]" icon={createOutline}/>
+                        <a href='./details'>
+                            <IonIcon className=" h-5 w-5 cursor-pointer text-[#708f7f]" icon={createOutline}/>
+                        </a>
                     </Space>
                 ),
             },
