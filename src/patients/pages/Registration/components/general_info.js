@@ -1,9 +1,8 @@
 import React from "react";
-import {Input, Select} from "antd/es";
-
-class GeneralInformation extends  React.Component{
+import { Input, Select, Form } from "antd/es";
+class GeneralInformation extends React.Component {
     render() {
-        return(
+        return (
             <div className="mt-10 ml-[90px] mr-[90px] ">
                 <h4 className="font-bold text-black  text-[15px] mb-5"> General Information</h4>
                 <div className=" h-20 flex space-x-2 justify-between items-center flex-wrap">
@@ -17,10 +16,10 @@ class GeneralInformation extends  React.Component{
                         {/*<Input disabled={true} className=" " style={{width:85}}></Input>*/}
                     </div>
 
-                {/*    Name*/}
+                    {/*    Name*/}
                     <div className=" font-medium flex flex-col h-auto">
                         <h2>Name</h2>
-                        <Input   className="" style={{border:2,borderColor:'#cdc9c6'}}></Input>
+                        <Input className="" style={{ border: 2, borderColor: '#cdc9c6' }}></Input>
                     </div>
 
                     {/*    Gender*/}
@@ -46,12 +45,12 @@ class GeneralInformation extends  React.Component{
                     {/*    Age*/}
                     <div className=" font-medium flex flex-col h-auto">
                         <h2>Age</h2>
-                        <Input  className=""></Input>
+                        <Input className=""></Input>
                     </div>
-                {/*    Phone*/}
+                    {/*    Phone*/}
                     <div className=" font-medium flex flex-col h-auto">
                         <h2>Phone</h2>
-                        <Input  className=""></Input>
+                        <Input className=""></Input>
                     </div>
 
                 </div>
@@ -60,4 +59,4 @@ class GeneralInformation extends  React.Component{
     }
 }
 
-export  default GeneralInformation
+export default GeneralInformation
