@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import patientReducer from './slice/patientSlicer'
+import patientReducer from './patientSlice'
 import { reducer as reduxFormReducer } from 'redux-form';
 
 export default configureStore({

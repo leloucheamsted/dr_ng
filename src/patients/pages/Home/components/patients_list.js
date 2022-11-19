@@ -1,25 +1,30 @@
 import { Button, Col, Input, InputNumber, Pagination, Row, Slider, Space, Table, Tag } from "antd";
 import "antd/dist/antd.css";
 import React, { useState, Component, useEffect } from 'react';
-import { useSelector, useDispatch, connect } from "react-redux";
+import { useSelector, connect } from "react-redux";
 import { IonIcon } from "@ionic/react";
 import { filter, trash, search, createOutline, chevronUp, chevronDown } from "ionicons/icons";
+import { Link } from 'react-router-dom';
+import moment from 'moment-timezone';
+
 import Icon from "antd/es/icon";
 import Highlighter from "react-highlight-words";
-import store from "../../../../store";
-import { getPatient } from "../../../../slice/patientSlicer";
-import { getPatients } from "../../../services/patients.service";
+// import { useDispatch } from "react-redux";
+import { deletePatient } from "../../../../redux/patientSlice";
+import store from "../../../../redux/store";
 const pageSize = 6;
 
-function PatientsArray() {
-    const patients = useSelector(store => store.patient)
-    return <>{patients}</>
-}
 class PatientsList extends React.Component {
+    handleDeletePatient = (code) => {
+        const { dispatch } = this.props;
+        dispatch(deletePatient({
+            code: code
+        }));
+    };
     constructor(props) {
         super(props)
         this.state = {
-            data: [{}],
+
             orderDirection: "",
             searchText: "",
             left: 33,
@@ -30,23 +35,9 @@ class PatientsList extends React.Component {
             maxIndex: 0,
         }
     }
-
-    //     useEffect(() => {
-
-    //         getPatients().then((data) => {
-    //                dispatch(setPatientsR(data))              
-    //         })
-    //  }, [dataStat])
     componentDidMount() {
-
-        // console.log("dkfkfk")
-        // this.setState({
-        //data: useSelector(store => store.patients)
-        // })
     }
     getData = (data, current, pageSize) => {
-        console.log(data.dataState);
-        //  const array = Array.from(this.props.params)
         return data.slice((current - 1) * pageSize, current * pageSize);
     };
     getColumnFiltersProps = ({
@@ -84,7 +75,16 @@ class PatientsList extends React.Component {
                         onChange={e => this.setState({ left: e[0], right: e[1] })}
                     />
                 </Row>
-                <Row>
+                <Row onClick={() => {
+                    this.handleSearchAge(selectedKeys, confirm);
+                    setSelectedKeys(
+                        this.props.params
+                            .filter(
+                                d => this.state.left <= d.age && d.age <= this.state.right
+                            )
+                            .map(d => d.key)
+                    );
+                }}>
                     <Button
                         type="primary"
                         block
@@ -92,7 +92,7 @@ class PatientsList extends React.Component {
                         onClick={() => {
                             this.handleSearchAge(selectedKeys, confirm);
                             setSelectedKeys(
-                                this.data
+                                this.props.params
                                     .filter(
                                         d => this.state.left <= d.age && d.age <= this.state.right
                                     )
@@ -116,7 +116,7 @@ class PatientsList extends React.Component {
                 highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
                 searchWords={[this.state.searchText]}
                 autoEscape
-                textToHighlight={text ?? 0}
+                textToHighlight={text.toString()}
             />
         )
     });
@@ -175,7 +175,7 @@ class PatientsList extends React.Component {
                 highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
                 searchWords={[this.state.searchText]}
                 autoEscape
-                textToHighlight={text ?? 0}
+                textToHighlight={text.toString()}
             />
         )
     });
@@ -212,6 +212,8 @@ class PatientsList extends React.Component {
         const { current, minIndex, maxIndex } = this.state;
         //  const array = Array.from(this.props.params)
         console.log(this.props.params)
+        moment.tz.setDefault("Afrca/Douala");
+
         const columns = [
             {
                 title:
@@ -387,9 +389,9 @@ class PatientsList extends React.Component {
                             </div>
                         </div>
                     ),
-                dataIndex: 'dateOfRecordEntry',
-                key: 'dateOfRecordEntry',
-                sorter: (a, b) => a.dateOfRecordEntry.localeCompare(b.dateOfRecordEntry),
+                dataIndex: 'requestDate',
+                key: 'requestDate',
+                compare: (a, b) => a.requestDate.localeCompare(b.requestDate),
                 sortOrder: this.state.orderDirection,
 
             },
@@ -412,21 +414,12 @@ class PatientsList extends React.Component {
                 ),
                 key: 'status',
                 dataIndex: 'status',
-                render: (_, { status }) => (
-                    <>
-                        {((status) => {
-                            let bColor = status == 'rescheduled' ? '#fff5eb' : status == 'missed' ? '#faf0f1' : '#ebf7f3';
-                            let tColor = status == 'rescheduled' ? '#d39b4d' : status == 'missed' ? '#d4383e' : '#708f7f';
-                            if (status === 'loser') {
-                                bColor = 'volcano';
-                            }
-                            return (
-                                <h6 className="p-[2px] flex justify-center rounded-[5px] font-bold" style={{ backgroundColor: bColor, color: tColor }}>
-                                    {status}
-                                </h6>
-                            );
-                        })}
-                    </>
+                render: status => (
+                    <h6 className="p-[2px] flex justify-center rounded-[5px] font-bold"
+                        style={status === 'rescheduled' ? { backgroundColor: '#fff5eb', color: '#d39b4d' } : status === 'missed' ? { backgroundColor: '#faf0f1', color: '#d4383e' } : { backgroundColor: '#ebf7f3', color: '#708f7f' }} >
+                        {status}
+                    </h6>
+
                 ),
                 filters: [
                     {
@@ -458,19 +451,23 @@ class PatientsList extends React.Component {
                 key: 'action',
                 render: (_, record) => (
                     <Space size="middle">
-                        <IonIcon className=" h-5 w-5 cursor-pointer text-[#d4383e]" icon={trash} />
-                        <a href={`./registration/${record.code}-${this.props.params.length}`}>
-                            <IonIcon className=" h-5 w-5 cursor-pointer text-[#708f7f]" icon={createOutline} />
-                        </a>
+                        <IonIcon onClick={(e) => this.props.handleDeletePatient(e)} value={record.code} className=" h-5 w-5 cursor-pointer text-[#d4383e]" icon={trash} />
+
+                        {/* // </button>  href={`./registration/${record.code}`} */}
+                        <Link to={`./registration/${record.code}`}>
+                            <div >
+                                <IonIcon className=" h-5 w-5 cursor-pointer text-[#708f7f]" icon={createOutline} />
+                            </div>
+                        </Link>
                     </Space>
                 ),
             },
         ];
         return (
-            <div className="m-[6em] mt-10 h-full ">
-                <Table rowClassName={() => "rowClassName1"} pagination={false}
+            <div className="lg:m-[6em] m-[2em] mt-10  h-auto  ">
+                <Table className="overflow-hidden max-[1400px]:overflow-scroll  " rowClassName={() => "rowClassName1"} pagination={false}
                     columns={columns} dataSource={this.getData(this.props.params, current, pageSize)} />
-                <div className="flex  w-auto  justify-center items-center h-auto mt-10">
+                <div className="flex  w-auto  justify-center items-center h-auto mt-8">
                     <Pagination
                         pageSize={pageSize}
                         current={current}
@@ -484,17 +481,4 @@ class PatientsList extends React.Component {
         )
     }
 }
-
-// const mapStateToProps = (state) => {
-//     getPatients().then((data) => { })
-//     return {
-//         data: state.patient
-//     };
-// };
-// const mapDispatchToProps = {
-//     getPatient
-// };
-// pagination={false} pagination={{defaultPageSize: 10,showSizeChanger: true,position: ["bottomCenter"]}}
-export default PatientsList;
-
-// export default connect(mapStateToProps, mapDispatchToProps)(PatientsList);
+export default connect()(PatientsList);

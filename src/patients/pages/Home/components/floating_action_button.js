@@ -1,12 +1,9 @@
 import { Link } from "react-router-dom";
-import { navigate } from "ionicons/icons";
 
 
 
 function FloatingActionButton(props) {
-    const goRegisterPage = () => {
-        navigate('./registration');
-    }
+
     return (
 
         //  <Link href="/registration">

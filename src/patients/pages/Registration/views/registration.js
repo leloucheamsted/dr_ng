@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect, Component } from 'react';
 import moment from 'moment-timezone';
 import { Link, Routes, Route, useNavigate } from 'react-router-dom';
-import { create, getPatientsByid } from "../../../../slice/patientSlicer";
+import { getPatientsByid, addPatient, updatePatient, updatePatientAsync, addPatientAsync } from "../../../../redux/patientSlice";
 export default function Registration() {
     // const router = useRouter()
     let { id } = useParams();
@@ -28,7 +28,8 @@ export default function Registration() {
         isFirstTime: null,
         requestDate: null,
         status: null,
-        dateOfRecordEntry: null,
+        appointmentTime: null,
+        requestDate: null,
         address: null,
         city: null,
         noteBefore: null,
@@ -54,7 +55,7 @@ export default function Registration() {
     })
 
     const handleChange = (event) => {
-        event.preventDefault();
+        //   event.preventDefault();
         if (currentState?.code) {
             setcurentPatient({ ...currentPatient, [event.target.name]: event.target.value });
 
@@ -63,62 +64,53 @@ export default function Registration() {
 
 
         }
-
+        console.log(currentState)
     }
 
     useEffect(() => {
-        if (currentState?.code) {
-            setQuery({ method: "PUT", body: JSON.stringify(currentPatient), URL: `https://medicalserverh.herokuapp.com/api/patients/${currentPatient?._id}` })
-        } else {
-            setQuery({ method: "POST", body: JSON.stringify(Patient), URL: `https://medicalserverh.herokuapp.com/api/patients` })
+        //  console.log(currentPatient.code)
+        // if (currentState?.code) {
+        //     setQuery({ method: "PUT", body: JSON.stringify(currentPatient), URL: `https://medicalserverh.herokuapp.com/api/patients/${currentPatient?._id}` })
+        // } else {
+        //     setQuery({ method: "POST", body: JSON.stringify(Patient), URL: `https://medicalserverh.herokuapp.com/api/patients` })
 
-        }
+        // }
 
     }, [currentPatient, Patient, id])
 
     moment.tz.setDefault("Afrca/Douala");
 
     const handleSubmit = async (event) => {
-        event.appointmentDate = moment(event.appointmentDate._d).format("YYYY-MM-DD")
-        event.requestDate = moment(event.requestDate._d).format("YYYY-MM-DD")
-        event.age = parseInt(event.age)
-        // event.code = createCode(1, event.appointmentDate)
-        dispatch(create(event))
-        if (query.method == "POST") {
-            event.code = createCode(parseInt(id) + 1, event.appointmentDate)
-
+        if (event.appointmentDate) {
+            event.appointmentDate = moment(event.appointmentDate._d).format("YYYY-MM-DD")
         }
-        try {
-            dispatch(create(event))
-            navigate(-1)
-            // await fetch(query.URL, {
-            //     method: query.method,
-            //     mode: 'cors',
-            //     cache: 'no-cache',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     },
-            //     referrerPolicy: 'no-referrer',
-            //     body: query.body
-            // }).then((data) => {
-            //     if (data.patient) {
-            //         dispatch(create(data.patient))
-            //         useNavigate.push(-1)
-            //     } else {
-            //         console.log(data.message)
-            //     }
-            // }
-            // )
-
-
-        } catch (error) {
-            console.log(error);
+        if (event.requestDate) {
+            event.requestDate = moment(event.requestDate._d).format("YYYY-MM-DD")
+        }
+        event.age = parseInt(event.age)
+        if (currentState?.code !== undefined) {
+            console.log('Update patient info....')
             console.log(event)
+            event.code = currentState.code
+
+            dispatch(updatePatientAsync({ patient: event }))
+
+            navigate(-1)
+        }
+        else {
+            console.log('Create patient ....')
+            event.code = createCode(parseInt(id) + 1, event.appointmentDate)
+            console.log(event)
+            dispatch(addPatientAsync({
+                patient: event
+            }))
+            navigate(-1)
         }
     }
+
     return (
         <Form autoComplete="off" onFinish={handleSubmit}>
-            <div className="relative h-screen  bg-[#ede9e6] ">
+            <div className="relative h-screen  w-screen    bg-[#ede9e6] ">
                 <AppBar></AppBar>
                 <Form.Item>
 
@@ -130,13 +122,13 @@ export default function Registration() {
                     <IonIcon className=" h-8 w-8 text-black cursor-pointer " icon={arrowBack} /> <text className="text-[20px]">NEW RECORD</text>
                 </div >
                 <div className="font-bold flex  justify-center items-center">
-                    <div className="bg-red-300 w-[100px] h-1"></div>
+                    <div className="bg-red-300 w-[10em] h-[3px]"></div>
                 </div>
                 {/*    General information*/}
                 {/* <GeneralInformation/> */}
                 <div className="mt-10 ml-[90px] mr-[90px] ">
                     <h4 className="font-bold text-black  text-[15px] mb-5"> General Information</h4>
-                    <div className=" h-20 flex space-x-2 justify-between items-center flex-wrap">
+                    <div className="  flex space-y-4 space-x-2 justify-between items-center flex-wrap">
 
                         {/* Unique code*/}
                         <div className=" mb-5 font-medium flex flex-col h-auto">
@@ -148,7 +140,7 @@ export default function Registration() {
                         </div>
 
                         {/*    Name*/}
-                        <div className=" font-medium flex flex-col h-auto">
+                        <div className=" font-medium flex flex-col ">
                             <h2>Name</h2>
                             <Form.Item name="name" initialValue={currentPatient?.name} onInput={handleChange}
                                 rules={[{ required: true, message: 'Please input  name!' }]}>
@@ -157,9 +149,9 @@ export default function Registration() {
                         </div>
 
                         {/*    Gender*/}
-                        <div className=" font-medium flex flex-col h-auto">
+                        <div className=" font-medium flex flex-col ">
                             <h2>Sex</h2>
-                            <Form.Item name="sex" initialValue={currentPatient?.gender} rules={[{ required: true, message: 'Please input  sex!' }]} >
+                            <Form.Item name="gender" initialValue={currentPatient?.gender} rules={[{ required: true, message: 'Please input  sex!' }]} >
                                 <Select name="gender" id="gender" onInput={handleChange}
                                     style={{ width: 120 }}
                                     // onChange={handleChange}
@@ -195,18 +187,19 @@ export default function Registration() {
 
                     </div>
                 </div>
-                <div className=" ml-[90px] bg-[#bbb7b4] mt-5 h-[2px] w-full"></div>
+                <div className=" ml-[90px] bg-[#bbb7b4] mt-5 h-[2px] w-[100%-200px]"></div>
                 {/*    Appoitnment information*/}
                 {/* <AppoitermentInformation /> */}
                 <div className="mt-5 ml-[90px] mr-[90px] ">
                     <h4 className="font-bold text-black  text-[15px] mb-5"> Appointment Information</h4>
-                    <div className=" h-20 flex space-x-2 justify-between items-center flex-wrap">
+                    <div className=" flex space-x-2 justify-between items-center flex-wrap">
 
                         {/* appointment data*/}
                         <div className=" font-medium flex flex-col h-auto">
                             <h2>Appointment date</h2>
-                            <Form.Item id="appointment date" initialValue={currentPatient?.appointmentDate} name="appointmentDate">
-                                <DatePicker format="YYYY-MM-D HH:m:s" onInput={handleChange} value={currentPatient?.appointmentDate} id="appointmentDate" name="appointmentDate" />
+                            <Form.Item id="appointment date" initialValue={moment(currentPatient?.appointmentDate)} name="appointmentDate"
+                                rules={[{ required: true, message: 'Please input  date!' }]}>
+                                <DatePicker format="YYYY-MM-D HH:m:s" onInput={handleChange} value={moment(currentPatient?.appointmentDate)} id="appointmentDate" name="appointmentDate" />
                             </Form.Item>
 
                         </div>
@@ -214,7 +207,7 @@ export default function Registration() {
                         {/*    first time*/}
                         <div className=" font-medium flex flex-col h-auto">
                             <h2>First time</h2>
-                            <Form.Item initialValue={currentPatient?.isFirstTime} name="isFirstTime">
+                            <Form.Item initialValue={currentPatient?.isFirstTime == true ? 'yes' : 'no'} name="isFirstTime">
                                 <Select name="isFirstTime" id="isFirstTime"
                                     defaultValue="no"
                                     style={{ width: 120 }}
@@ -237,23 +230,23 @@ export default function Registration() {
                         {/* request data*/}
                         <div className=" font-medium flex flex-col h-auto">
                             <h2>Request date</h2>
-                            <Form.Item initialValue={currentPatient?.requestDate} name="requestDate">
-                                <DatePicker format="YYYY-MM-D HH:m:s" onInput={handleChange} value={currentPatient?.requestDate} id="requestDate" name="request_date" />
+                            <Form.Item initialValue={moment(currentPatient?.requestDate)} name="requestDate">
+                                <DatePicker format="YYYY-MM-D HH:m:s" onInput={handleChange} value={moment(currentPatient?.requestDate)} id="requestDate" name="requestDate" />
                             </Form.Item>
                         </div>
 
                         {/*    appointment status */}
                         <div className=" font-medium flex flex-col h-auto">
                             <h2>Appointment Status</h2>
-                            <Form.Item initialValue={currentPatient?.appointment_status} name="appointment_status">
-                                <Select onInput={handleChange} id="appointment_status" name="appointment_status"
-                                    defaultValue={currentPatient?.appointment_status}
+                            <Form.Item initialValue={currentPatient?.status} name="status">
+                                <Select onInput={handleChange} id="status" name="status"
+                                    defaultValue={currentPatient?.status}
                                     style={{ width: 120 }}
                                     // onChange={handleChange}
                                     options={[
                                         {
-                                            value: 'pending',
-                                            label: 'Pending',
+                                            value: 'passed',
+                                            label: 'Passed',
                                         },
                                         {
                                             value: 'missed',
@@ -285,7 +278,7 @@ export default function Registration() {
                 {/* <AddressInformation /> */}
                 <div className="mt-5 ml-[90px] mr-[90px] ">
                     <h4 className="font-bold text-black  text-[15px] mb-5"> Address Information</h4>
-                    <div className=" h-20 flex space-x-10 justify-start items-center flex-wrap">
+                    <div className="  lg:flex xl:flex  space-x-5 justify-start items-center flex-wrap">
                         {/*    Addresse 1*/}
                         <div className=" font-medium flex flex-col h-auto">
                             <h2>Addresse 1</h2>
@@ -295,7 +288,7 @@ export default function Registration() {
                         </div>
 
                         {/*    City*/}
-                        <div className=" font-medium flex flex-col h-auto">
+                        <div className=" font-medium flex flex-col ">
                             <h2>City</h2>
                             <Form.Item initialValue={currentPatient?.city} name="city">
                                 <Input onInput={handleChange} value={currentPatient?.city} id="city" name="city" className=""></Input>
@@ -309,7 +302,7 @@ export default function Registration() {
                 {/* <Note /> */}
                 <div className=" ml-[90px] mr-[90px] ">
                     <h4 className="font-bold text-black  text-[15px] mb-5"> Notes</h4>
-                    <div className=" h-20 flex space-x-10 justify-start items-center flex-wrap">
+                    <div className=" h-20 lg:flex xl:flex  lg:space-x-10 justify-start items-center flex-wrap">
                         {/*    Before  1*/}
                         <div className=" font-medium flex flex-col h-auto">
                             <h2>Before Appointment </h2>
@@ -330,26 +323,8 @@ export default function Registration() {
                     </div>
                 </div>
             </div>
-        </Form>
+        </Form >
     )
 }
 
-
-
-// }
-// export default Registration;
-
-// const validate = values => {
-//     const errors = {};
-//     if (!values.name) {
-//         errors.firstName = "Required";
-//     }
-
-//     return errors;
-// };
-
-// export default reduxForm({
-//     form: "simple", // a unique identifier for this form
-//     validate
-// })(RegisterForm);
 

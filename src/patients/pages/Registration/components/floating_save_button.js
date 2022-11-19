@@ -6,7 +6,7 @@ import { navigate } from "ionicons/icons";
 function FloatingSaveButton() {
 
     return (
-        <button htmlType="submit" className="fixed text-white font-bold cursor-pointer flex justify-center items-center bottom-5 right-10 rounded-[10px] shadow-sm w-20 h-10 bg-[#bb6470]">
+        <button htmlType="submit" className="fixed z-10 text-white font-bold cursor-pointer flex justify-center items-center bottom-5 right-10 rounded-[10px] shadow-sm w-20 h-10 bg-[#bb6470]">
             Save
         </button>
     )

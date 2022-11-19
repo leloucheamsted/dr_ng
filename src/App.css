@@ -3,6 +3,11 @@
   background-color: #ede9e6;
 }
 
+html {
+  background-color: #ede9e6;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -16,6 +21,10 @@ body {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
+}
+
+input {
+  border: none !important;
 }
 
 .App-header {

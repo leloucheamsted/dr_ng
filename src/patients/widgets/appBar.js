@@ -1,8 +1,8 @@
-import {Divider} from "antd";
+import { Divider } from "antd";
 
-function AppBar(){
+function AppBar() {
     return (
-        <div className=" z-10 bg-[#423a38] h-[4em] shadow-sm rounded-bl-[45px]">
+        <div className="fixed w-full top-0 z-10  bg-[#423a38] h-[4em] shadow-sm rounded-bl-[45px]">
             <div className="bg-[#5d91a6] h-[4em]  space-x-2 flex justify-start items-center p-5 w-[40%] rounded-bl-[45px] rounded-br-[90px]">
 
                 <div className=" flex  h-7 justify-start mt-2 items-center ">
@@ -17,4 +17,4 @@ function AppBar(){
     )
 }
 
-export  default AppBar;
+export default AppBar;
