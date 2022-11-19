@@ -118,8 +118,6 @@ export const patientSlice = createSlice({
 })
 
 
-// export var selectPatient = state => state.patient.patients
-// export var getPatient = state => state.patient.patients
 export var getPatientsByid = id => state => {
     let res = state.patient.find((e) => e.code === id)
     return res
