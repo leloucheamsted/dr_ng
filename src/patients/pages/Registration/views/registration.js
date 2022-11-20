@@ -87,6 +87,11 @@ export default function Registration() {
         if (event.requestDate) {
             event.requestDate = moment(event.requestDate._d).format("YYYY-MM-DD")
         }
+        if (event.isFirstTime === "yes") {
+            event.isFirstTime = true
+        } else {
+            event.isFirstTime = false
+        }
         event.age = parseInt(event.age)
         if (currentState?.code !== undefined) {
             console.log('Update patient info....')
@@ -94,7 +99,6 @@ export default function Registration() {
             event.code = currentState.code
 
             dispatch(updatePatientAsync({ patient: event }))
-
             navigate(-1)
         }
         else {
@@ -197,7 +201,7 @@ export default function Registration() {
                         {/* appointment data*/}
                         <div className=" font-medium flex flex-col h-auto">
                             <h2>Appointment date</h2>
-                            <Form.Item id="appointment date" initialValue={moment(currentPatient?.appointmentDate)} name="appointmentDate"
+                            <Form.Item id="appointmentDate" initialValue={moment(currentPatient?.appointmentDate)} name="appointmentDate"
                                 rules={[{ required: true, message: 'Please input  date!' }]}>
                                 <DatePicker format="YYYY-MM-D HH:m:s" onInput={handleChange} value={moment(currentPatient?.appointmentDate)} id="appointmentDate" name="appointmentDate" />
                             </Form.Item>

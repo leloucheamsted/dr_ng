@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { FakeData } from "../patients/services/fake_data";
 
-
+const baseUrl = "https://backendclinic-crqud.ondigitalocean.app"
+// http://localhost:3003
 export const getPateintsAsync = createAsyncThunk('patients/getPatientsAsync',
     async () => {
-        const response = await fetch('http://localhost:3003/schedule');
+        const response = await fetch(`${baseUrl}/schedule`);
         if (response.ok) {
             const patients = await response.json();
             return { patients }
@@ -13,7 +14,7 @@ export const getPateintsAsync = createAsyncThunk('patients/getPatientsAsync',
 export const addPatientAsync = createAsyncThunk(
     'patieints/AddPatientAsync',
     async (payload) => {
-        const response = await fetch('http://localhost:3003/schedule', {
+        const response = await fetch(`${baseUrl}/schedule`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -28,7 +29,7 @@ export const addPatientAsync = createAsyncThunk(
     });
 export const updatePatientAsync = createAsyncThunk('patients/updatePatientsAsync',
     async (payload) => {
-        const response = await fetch(`http://localhost:3003/schedule/${payload.patient.code}`, {
+        const response = await fetch(`${baseUrl}/schedule/${payload.patient.code}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -46,7 +47,7 @@ export const updatePatientAsync = createAsyncThunk('patients/updatePatientsAsync
 export const deletePatientAsync = createAsyncThunk(
     'patients/deletePatientAsync',
     async (payload) => {
-        const resp = await fetch(`http://localhost:3003/schedule/${payload.code}`, {
+        const resp = await fetch(`${baseUrl}/schedule/${payload.code}`, {
             method: 'DELETE',
         });
 
